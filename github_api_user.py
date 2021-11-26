@@ -4,7 +4,7 @@ import unittest
 
 class GithubSearchTests(unittest.TestCase):
 
-    def test_users_fallowers(self):
+    def test_user_search_by_followers(self):
         # Test if the user's followers are until 30 followers
         # This test is originally from users with at least 1k followers, but the github api only returns 30
         query_users_followers = requests.get(
@@ -19,8 +19,8 @@ class GithubSearchTests(unittest.TestCase):
         followers_count = len(followers_response)
         assert followers_count == 30, "This user have more than 30 followers"
 
-    def test_users_type(self):
-        # Test if the user's type is 'User'
+    def test_user_search_by_type(self):
+        # Test if the user's type is 'Organization'
         query_users_type = requests.get('https://api.github.com/search/users?q=type:org')
         users_type_json = query_users_type.json()
         users_type_data = users_type_json["items"]
@@ -28,7 +28,7 @@ class GithubSearchTests(unittest.TestCase):
         user_type = users_type_data[0]["type"]
         assert user_type == "Organization", "This user's type is User"
 
-    def test_users_lenguage(self):
+    def test_user_search_by_language(self):
         # Test if the user there are at least one repository with the python language
         query_users_language = requests.get(
             'https://api.github.com/search/users?q=language:python+repos:%3E30')
@@ -42,7 +42,7 @@ class GithubSearchTests(unittest.TestCase):
         repo_language = user_repos_response[2]["language"]
         assert repo_language.lower() == "python", "There's no Python repo in this user account"
 
-    def test_users_location(self):
+    def test_user_search_by_location(self):
         # Test if the location of the user is Denmark
         query_users_location = requests.get('https://api.github.com/search/users?q=python+location:denmark')
         users_location_json = query_users_location.json()

@@ -4,7 +4,7 @@ import unittest
 
 class GithubSearchTests(unittest.TestCase):
 
-    def test_search_issues_and_pr(self):
+    def test_search_by_issues_and_pr(self):
         pass
 
 
