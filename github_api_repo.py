@@ -99,8 +99,14 @@ class GithubSearchTests(unittest.TestCase):
         data = response.json()
         repository_list = data["items"]
 
-        user = repository_list[0]["owner"]["login"]
-        assert "renataberoli" in user, "This is not the renataberoli's repository."
+        user_list = []
+        for repository in repository_list:
+            user_list.append(repository["owner"]["login"])
+
+        repo_user = [True if "renataberoli" in user else False for user in user_list]
+
+        error_message = "This is not the renataberoli's repository."
+        self.assertNotIn(False, repo_user, error_message)
 
     def test_repository_search_by_org(self):
         response = requests.get('https://api.github.com/search/repositories?q=org:d3')
