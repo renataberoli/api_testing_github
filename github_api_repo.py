@@ -30,7 +30,7 @@ class GithubSearchTests(unittest.TestCase):
         random_repository = random.choice(repository_list)
         random_description = random_repository["description"]
 
-        assert "python" in random_description.lower(), "There's no 'Python' in the repository's description."
+        self.assertIn("python", random_description.lower(), "There's no 'Python' in the repository's description.")
 
     def test_repository_search_by_readme(self):
         # Test to verify if the API returns only repositories that have in the readme the keyword "cadmio"
@@ -41,13 +41,13 @@ class GithubSearchTests(unittest.TestCase):
         random_repository = random.choice(repository_list)
 
         user = random_repository["owner"]["login"]
-        r_name = random_repository["name"]
+        repo_name = random_repository["name"]
         branch = random_repository["default_branch"]
-        repo_url = f"https://raw.githubusercontent.com/{user}/{r_name}/{branch}/README.md"
+        repo_url = f"https://raw.githubusercontent.com/{user}/{repo_name}/{branch}/README.md"
         file_response = requests.get(repo_url)
         readme_content = file_response.content
 
-        assert b"cadmio" in readme_content.lower(), "There's no 'Cadmio' in the repository's readme."
+        self.assertIn(b"cadmio", readme_content.lower(), "There's no 'Cadmio' in the repository's readme.")
 
     def test_repository_search_by_owner_name(self):
         # Test to verify if the API returns only the repository "renataberoli/renataberoli.github.io"
@@ -56,9 +56,13 @@ class GithubSearchTests(unittest.TestCase):
         data = response.json()
         repository_list = data["items"]
 
-        repo_full_name = repository_list[0]["full_name"]
-        assert "renataberoli/renataberoli.github.io" in repo_full_name, "The repository is from a different " \
-                                                                        "owner/name. "
+        fullname_list = []
+        for repository in repository_list:
+            fullname_list.append(repository["full_name"])
+
+        self.assertIn("renataberoli/renataberoli.github.io", fullname_list, "The repository is from a different "
+                                                                            "owner/name. ")
+        self.assertEqual(len(fullname_list), 1)
 
     def test_repository_search_by_user(self):
         # Test to verify if the API returns only the repositories of the user "renataberoli"
