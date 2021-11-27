@@ -9,12 +9,13 @@ class GithubSearchTests(unittest.TestCase):
         # Test to verify if the API returns only repositories that have in the name the keyword "python"
         url = "https://api.github.com/search/repositories?q=python+in:name"
         response = requests.get(url)
-        data = response.json()
-        repository_list = data["items"]
 
         # Confirm the response status_code
         status_code = response.status_code
         self.assertEqual(200, status_code)
+
+        data = response.json()
+        repository_list = data["items"]
 
         list_of_names = []
         for repository in repository_list:
@@ -23,35 +24,38 @@ class GithubSearchTests(unittest.TestCase):
 
         python_in_name = [True if "python" in name else False for name in list_of_names]
 
-        self.assertNotIn(False, python_in_name, "The API returned a repository without 'Python' in the repository's "
-                                                "name.")
+        error_message = "The API returned a repository without 'Python' in the repository's name."
+        self.assertNotIn(False, python_in_name, error_message)
 
     def test_repository_search_by_description(self):
         # Test to verify if the API returns only repositories that have in the description the keyword "python"
         url = "https://api.github.com/search/repositories?q=python+in:description"
         response = requests.get(url)
-        data = response.json()
-        repository_list = data["items"]
 
         # Confirm the response status_code
         status_code = response.status_code
         self.assertEqual(200, status_code)
 
+        data = response.json()
+        repository_list = data["items"]
+
         random_repository = random.choice(repository_list)
         random_description = random_repository["description"]
 
-        self.assertIn("python", random_description.lower(), "There's no 'Python' in the repository's description.")
+        error_message = "There's no 'Python' in the repository's description."
+        self.assertIn("python", random_description.lower(), error_message)
 
     def test_repository_search_by_readme(self):
         # Test to verify if the API returns only repositories that have in the readme the keyword "cadmio"
         url = "https://api.github.com/search/repositories?q=cadmio+in:readme"
         response = requests.get(url)
-        data = response.json()
-        repository_list = data["items"]
 
         # Confirm the response status_code
         status_code = response.status_code
         self.assertEqual(200, status_code)
+
+        data = response.json()
+        repository_list = data["items"]
 
         random_repository = random.choice(repository_list)
 
@@ -62,28 +66,36 @@ class GithubSearchTests(unittest.TestCase):
         file_response = requests.get(repo_url)
         readme_content = file_response.content
 
-        self.assertIn(b"cadmio", readme_content.lower(), "There's no 'Cadmio' in the repository's readme.")
+        error_message = "There's no 'Cadmio' in the repository's readme."
+        self.assertIn(b"cadmio", readme_content.lower(), error_message)
 
     def test_repository_search_by_owner_name(self):
         # Test to verify if the API returns only the repository "renataberoli/renataberoli.github.io"
         url = "https://api.github.com/search/repositories?q=repo:renataberoli/renataberoli.github.io"
         response = requests.get(url)
-        data = response.json()
-        repository_list = data["items"]
 
         # Confirm the response status_code
         status_code = response.status_code
         self.assertEqual(200, status_code)
 
+        data = response.json()
+        repository_list = data["items"]
+
         # This request search by a specific repository, so the response must be only one repository
         self.assertEqual(len(repository_list), 1)
 
-        self.assertIn("renataberoli/renataberoli.github.io", repository_list[0]["full_name"], "The repository is from "
-                                                                                              "a different owner/name. ")
+        error_message = "The repository is from a different owner/name."
+        self.assertIn("renataberoli/renataberoli.github.io", repository_list[0]["full_name"], error_message)
 
     def test_repository_search_by_user(self):
         # Test to verify if the API returns only the repositories of the user "renataberoli"
-        response = requests.get('https://api.github.com/search/repositories?q=user:renataberoli')
+        url = "https://api.github.com/search/repositories?q=user:renataberoli"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
