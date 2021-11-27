@@ -109,20 +109,45 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, repo_user, error_message)
 
     def test_repository_search_by_org(self):
-        response = requests.get('https://api.github.com/search/repositories?q=org:d3')
+        url = "https://api.github.com/search/repositories?q=org:github"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        user = repository_list[0]["owner"]["login"]
-        assert "d3" in user, "This is not the D3's repository."
+        repo_org_list = []
+        for repository in repository_list:
+            repo_org_list.append(repository["owner"]["login"])
+
+        result = [True if "github" in org else False for org in repo_org_list]
+
+        error_message = "There's at least one repository from other organization."
+        self.assertNotIn(False, result, error_message)
 
     def test_repository_search_by_size(self):
-        response = requests.get('https://api.github.com/search/repositories?q=Python+size:<=100')
+        # This test confirm if the repository's size is less or equal than 100 kilobytes
+        url = "https://api.github.com/search/repositories?q=size:<=100"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        repo_size = repository_list[0]["size"]
-        assert repo_size <= 100, "This repository is bigger than 100."
+        repo_size_list = []
+        for repository in repository_list:
+            repo_size_list.append(repository["size"])
+
+        result = [True if size <=100 else False for size in repo_size_list]
+
+        error_message = "This repository is bigger than 100 kilobytes."
+        self.assertNotIn(False, result, error_message)
 
     def test_repository_search_by_number_of_followers(self):
         """
