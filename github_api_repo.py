@@ -7,9 +7,14 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repository_search_by_name(self):
         # Test to verify if the API returns only repositories that have in the name the keyword "python"
-        response = requests.get('https://api.github.com/search/repositories?q=python+in:name')
+        url = "https://api.github.com/search/repositories?q=python+in:name"
+        response = requests.get(url)
         data = response.json()
         repository_list = data["items"]
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
 
         list_of_names = []
         for repository in repository_list:
@@ -23,9 +28,14 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repository_search_by_description(self):
         # Test to verify if the API returns only repositories that have in the description the keyword "python"
-        response = requests.get('https://api.github.com/search/repositories?q=python+in:description')
+        url = "https://api.github.com/search/repositories?q=python+in:description"
+        response = requests.get(url)
         data = response.json()
         repository_list = data["items"]
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
 
         random_repository = random.choice(repository_list)
         random_description = random_repository["description"]
@@ -34,9 +44,14 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repository_search_by_readme(self):
         # Test to verify if the API returns only repositories that have in the readme the keyword "cadmio"
-        response = requests.get('https://api.github.com/search/repositories?q=cadmio+in:readme')
+        url = "https://api.github.com/search/repositories?q=cadmio+in:readme"
+        response = requests.get(url)
         data = response.json()
         repository_list = data["items"]
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
 
         random_repository = random.choice(repository_list)
 
@@ -51,18 +66,20 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repository_search_by_owner_name(self):
         # Test to verify if the API returns only the repository "renataberoli/renataberoli.github.io"
-        response = requests.get(
-            'https://api.github.com/search/repositories?q=repo:renataberoli/renataberoli.github.io')
+        url = "https://api.github.com/search/repositories?q=repo:renataberoli/renataberoli.github.io"
+        response = requests.get(url)
         data = response.json()
         repository_list = data["items"]
 
-        fullname_list = []
-        for repository in repository_list:
-            fullname_list.append(repository["full_name"])
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
 
-        self.assertIn("renataberoli/renataberoli.github.io", fullname_list, "The repository is from a different "
-                                                                            "owner/name. ")
-        self.assertEqual(len(fullname_list), 1)
+        # This request search by a specific repository, so the response must be only one repository
+        self.assertEqual(len(repository_list), 1)
+
+        self.assertIn("renataberoli/renataberoli.github.io", repository_list[0]["full_name"], "The repository is from "
+                                                                                              "a different owner/name. ")
 
     def test_repository_search_by_user(self):
         # Test to verify if the API returns only the repositories of the user "renataberoli"
@@ -125,7 +142,7 @@ class GithubSearchTests(unittest.TestCase):
         print(f"The list of forks correctly ordered {forks_list_one}.")
 
         # the wrong result
-        request_two= requests.get(
+        request_two = requests.get(
             'https://api.github.com/search/repositories?q=Python+forks:>=1000&sort=forks&order=asc')
         data_two = request_two.json()
         repository_list_two = data_two["items"]
@@ -211,7 +228,7 @@ class GithubSearchTests(unittest.TestCase):
 
         # Test if a can access a public repository with the almost same query
         query_repo_public = requests.get(
-             'https://api.github.com/search/repositories?q=abacate+in:description+user:renataberoli+is:public')
+            'https://api.github.com/search/repositories?q=abacate+in:description+user:renataberoli+is:public')
         repo_public_json = query_repo_public.json()
         repo_public_data = repo_public_json["items"]
 
