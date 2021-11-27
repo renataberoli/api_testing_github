@@ -150,18 +150,25 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repository_search_by_number_of_followers(self):
-        """
-        https://github.community/t/api-is-very-confusing-by-listing-stars-count-for-watchers-count-on-all-repos/13817
-        https://developer.github.com/changes/2012-09-05-watcher-api/
-        This query is impossible to confirm
-        """
+        # This test was hard to do due to the confusion about the subject of the repository's "follower."
+        # https://github.community/t/api-is-very-confusing-by-listing-stars-count-for-watchers-count-on-all-repos/13817
+        # https://developer.github.com/changes/2012-09-05-watcher-api/
 
-        response = requests.get(
-            'https://api.github.com/search/repositories?q=abacate+in:description+followers:1')
+        url = "https://api.github.com/search/repositories?q=renataberoli+in:description+followers:1"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        assert repository_list[0]["watchers_count"] == 1, "This is a repository with less then 1 follower."
+        # This request search by a specific repository, so the response must be only one repository
+        self.assertEqual(len(repository_list), 1)
+
+        error_message = "This is a repository with less then 1 follower."
+        self.assertEqual(repository_list[0]["watchers_count"], 1)
 
     def test_repository_search_by_number_of_forks(self):
         # The expected result
