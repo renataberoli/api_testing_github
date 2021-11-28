@@ -168,37 +168,24 @@ class GithubSearchTests(unittest.TestCase):
         self.assertEqual(repository_list[0]["watchers_count"], 1)
 
     def test_repo_search_by_num_of_forks(self):
-        # The expected result
         response = requests.get(
             'https://api.github.com/search/repositories?q=forks:>=10000&sort=forks&order=asc')
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
-
-        forks_count = repository_list[0]["forks"]
-        assert forks_count >= 10000, "This is a repository with less than 10000 forks."
-
-        """
-        There's a problem with the forks order query when the same query but value is lower. 
-        You can see bellow:
-        """
 
         forks_list_one = []
         for fork in repository_list:
             forks_list_one.append(fork["forks_count"])
 
-        print(f"The list of forks correctly ordered {forks_list_one}.")
+        result = [True if fork >= 10000 else False for fork in forks_list_one]
 
-        # the wrong result
-        request_two = requests.get(
-            'https://api.github.com/search/repositories?q=Python+forks:>=1000&sort=forks&order=asc')
-        data_two = request_two.json()
-        repository_list_two = data_two["items"]
-
-        forks_list_two = []
-        for fork in repository_list_two:
-            forks_list_two.append(fork["forks_count"])
-
-        print(f"The list of forks with a problem in the order {forks_list_two}.")
+        error_message = "This is a repository with less than 10000 forks."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_num_of_stars(self):
         # Test if the repositories in the response have at least 5000 stars
