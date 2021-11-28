@@ -168,8 +168,8 @@ class GithubSearchTests(unittest.TestCase):
         self.assertEqual(repository_list[0]["watchers_count"], 1)
 
     def test_repo_search_by_num_of_forks(self):
-        response = requests.get(
-            'https://api.github.com/search/repositories?q=forks:>=10000&sort=forks&order=asc')
+        url = "https://api.github.com/search/repositories?q=forks:>=10000&sort=forks&order=asc"
+        response = requests.get(url)
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -189,12 +189,24 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_num_of_stars(self):
         # Test if the repositories in the response have at least 5000 stars
-        response = requests.get('https://api.github.com/search/repositories?q=stars:>5000&sort=stars&order=asc')
+        url = "https://api.github.com/search/repositories?q=stars:>5000&sort=stars&order=asc"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        stars_count = repository_list[0]["stargazers_count"]
-        assert stars_count > 5000, "This is a repository with less than 5000 stars."
+        numbers_of_stars = []
+        for star in repository_list:
+            numbers_of_stars.append(star["stargazers_count"])
+
+        result = [True if star > 5000 else False for star in numbers_of_stars ]
+
+        error_message = "This is a repository with less than 5000 stars."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_creation_date(self):
         response = requests.get(
