@@ -227,36 +227,69 @@ class GithubSearchTests(unittest.TestCase):
         result = [True if year <= "2021" else False for year in year_list]
 
         error_message = "This repository was created before 2021."
-        self.assertNotIn(False, year_list, error_message)
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_push_date(self):
-        response = requests.get('https://api.github.com/search/repositories?q=pushed:2020-01-01')
+        url = "https://api.github.com/search/repositories?q=pushed:2020-01-01"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        repo_pushed_datetime = repository_list[0]["pushed_at"]
-        assert repo_pushed_datetime[:4] <= "2020", "This repository was pushed before 2020."
+        year_list = []
+        for datetime in repository_list:
+            year = datetime["pushed_at"][:4]
+            year_list.append(year)
+
+        result = [True if year <= "2020" else False for year in year_list]
+
+        error_message = "This repository was created before 2020."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_language(self):
         # Test to verify if the repository language is Python
-        response = requests.get('https://api.github.com/search/repositories?q=language:Python')
+        url = "https://api.github.com/search/repositories?q=language:Python"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        language = repository_list[0]["language"]
-        assert "Python" in language, "This repository has a different language."
+        language_list = []
+        for language in repository_list:
+            language_list.append(language["language"])
+
+        result = [True if "python" in language.lower() else False for language in language_list]
+
+        error_message = "This repository has a different language."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_topic(self):
-        response = requests.get('https://api.github.com/search/repositories?q=topic:python')
+        url = "https://api.github.com/search/repositories?q=topic:python"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        topics_list = repository_list[0]["topics"]
-        topics_list_lower = []
-        for topic in topics_list:
-            topics_list_lower.append(topic.lower())
+        topics_list = []
+        for topic in repository_list:
+            topics_list.append(topic["topics"])
 
-        assert "python" in topics_list_lower, "There's no python Topic in this repository."
+        result = [True if "python" in topics else False for topics in topics_list]
+
+        error_message = "There's no python Topic in this repository."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_num_of_topics(self):
         response = requests.get('https://api.github.com/search/repositories?q=topics:1')
