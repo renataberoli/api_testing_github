@@ -292,12 +292,24 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_num_of_topics(self):
-        response = requests.get('https://api.github.com/search/repositories?q=topics:1')
+        url = "https://api.github.com/search/repositories?q=topics:1"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        topics_list = repository_list[0]["topics"]
-        assert len(topics_list) == 1, "There's more than one topic in this repository."
+        topics_list = []
+        for topic in repository_list:
+            topics_list.append(topic["topics"])
+
+        result = [True if len(topics) == 1 else False for topics in topics_list]
+
+        error_message = "There's more than one topic in this repository."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_license(self):
         response = requests.get('https://api.github.com/search/repositories?q=python+license:eupl-1.1')
