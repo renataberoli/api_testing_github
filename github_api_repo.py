@@ -209,13 +209,25 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_creation_date(self):
-        response = requests.get(
-            'https://api.github.com/search/repositories?q=created:<=2021-01-01')
+        url = "https://api.github.com/search/repositories?q=created:<=2021-01-01"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        repo_created_datetime = repository_list[0]["created_at"]
-        assert repo_created_datetime[:4] <= "2021", "This repository was created before 2021."
+        year_list = []
+        for datetime in repository_list:
+            year = datetime["created_at"][:4]
+            year_list.append(year)
+
+        result = [True if year <= "2021" else False for year in year_list]
+
+        error_message = "This repository was created before 2021."
+        self.assertNotIn(False, year_list, error_message)
 
     def test_repo_search_by_push_date(self):
         response = requests.get('https://api.github.com/search/repositories?q=pushed:2020-01-01')
