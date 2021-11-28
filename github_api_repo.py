@@ -144,7 +144,7 @@ class GithubSearchTests(unittest.TestCase):
         for repository in repository_list:
             repo_size_list.append(repository["size"])
 
-        result = [True if size <=100 else False for size in repo_size_list]
+        result = [True if size <= 100 else False for size in repo_size_list]
 
         error_message = "This repository is bigger than 100 kilobytes."
         self.assertNotIn(False, result, error_message)
@@ -203,7 +203,7 @@ class GithubSearchTests(unittest.TestCase):
         for star in repository_list:
             numbers_of_stars.append(star["stargazers_count"])
 
-        result = [True if star > 5000 else False for star in numbers_of_stars ]
+        result = [True if star > 5000 else False for star in numbers_of_stars]
 
         error_message = "This is a repository with less than 5000 stars."
         self.assertNotIn(False, result, error_message)
@@ -369,12 +369,24 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_if_is_archived(self):
-        response = requests.get('https://api.github.com/search/repositories?q=archived:true')
+        url = "https://api.github.com/search/repositories?q=archived:true"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        archived_status = repository_list[0]["archived"]
-        self.assertTrue(archived_status), "This repository is not archived."
+        status_list = []
+        for repo in repository_list:
+            status_list.append(repo["archived"])
+
+        result = [True if status is True else False for status in status_list]
+
+        error_message = "This repository is not archived."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_issue_label_good_first_issues(self):
         response = requests.get(
