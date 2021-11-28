@@ -5,7 +5,7 @@ import unittest
 
 class GithubSearchTests(unittest.TestCase):
 
-    def test_repository_search_by_name(self):
+    def test_repo_search_by_name(self):
         # Test to verify if the API returns only repositories that have in the name the keyword "python"
         url = "https://api.github.com/search/repositories?q=python+in:name"
         response = requests.get(url)
@@ -27,7 +27,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "The API returned a repository without 'Python' in the repository's name."
         self.assertNotIn(False, python_in_name, error_message)
 
-    def test_repository_search_by_description(self):
+    def test_repo_search_by_description(self):
         # Test to verify if the API returns only repositories that have in the description the keyword "python"
         url = "https://api.github.com/search/repositories?q=python+in:description"
         response = requests.get(url)
@@ -45,7 +45,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "There's no 'Python' in the repository's description."
         self.assertIn("python", random_description.lower(), error_message)
 
-    def test_repository_search_by_readme(self):
+    def test_repo_search_by_readme(self):
         # Test to verify if the API returns only repositories that have in the readme the keyword "cadmio"
         url = "https://api.github.com/search/repositories?q=cadmio+in:readme"
         response = requests.get(url)
@@ -69,7 +69,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "There's no 'Cadmio' in the repository's readme."
         self.assertIn(b"cadmio", readme_content.lower(), error_message)
 
-    def test_repository_search_by_owner_name(self):
+    def test_repo_search_by_owner_name(self):
         # Test to verify if the API returns only the repository "renataberoli/renataberoli.github.io"
         url = "https://api.github.com/search/repositories?q=repo:renataberoli/renataberoli.github.io"
         response = requests.get(url)
@@ -87,7 +87,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "The repository is from a different owner/name."
         self.assertIn("renataberoli/renataberoli.github.io", repository_list[0]["full_name"], error_message)
 
-    def test_repository_search_by_user(self):
+    def test_repo_search_by_user(self):
         # Test to verify if the API returns only the repositories of the user "renataberoli"
         url = "https://api.github.com/search/repositories?q=user:renataberoli"
         response = requests.get(url)
@@ -108,7 +108,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "This is not the renataberoli's repository."
         self.assertNotIn(False, repo_user, error_message)
 
-    def test_repository_search_by_org(self):
+    def test_repo_search_by_org(self):
         url = "https://api.github.com/search/repositories?q=org:github"
         response = requests.get(url)
 
@@ -128,7 +128,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "There's at least one repository from other organization."
         self.assertNotIn(False, result, error_message)
 
-    def test_repository_search_by_size(self):
+    def test_repo_search_by_size(self):
         # This test confirm if the repository's size is less or equal than 100 kilobytes
         url = "https://api.github.com/search/repositories?q=size:<=100"
         response = requests.get(url)
@@ -149,10 +149,7 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "This repository is bigger than 100 kilobytes."
         self.assertNotIn(False, result, error_message)
 
-    def test_repository_search_by_number_of_followers(self):
-        # This test was hard to do due to the confusion about the subject of the repository's "follower."
-        # https://github.community/t/api-is-very-confusing-by-listing-stars-count-for-watchers-count-on-all-repos/13817
-        # https://developer.github.com/changes/2012-09-05-watcher-api/
+    def test_repo_search_by_num_of_followers(self):
 
         url = "https://api.github.com/search/repositories?q=renataberoli+in:description+followers:1"
         response = requests.get(url)
@@ -170,10 +167,10 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "This is a repository with less then 1 follower."
         self.assertEqual(repository_list[0]["watchers_count"], 1)
 
-    def test_repository_search_by_number_of_forks(self):
+    def test_repo_search_by_num_of_forks(self):
         # The expected result
         response = requests.get(
-            'https://api.github.com/search/repositories?q=Python+forks:>=10000&sort=forks&order=asc')
+            'https://api.github.com/search/repositories?q=forks:>=10000&sort=forks&order=asc')
         data = response.json()
         repository_list = data["items"]
 
@@ -181,7 +178,7 @@ class GithubSearchTests(unittest.TestCase):
         assert forks_count >= 10000, "This is a repository with less than 10000 forks."
 
         """
-        There's a problem with the forks order query when the same query but value is higher. 
+        There's a problem with the forks order query when the same query but value is lower. 
         You can see bellow:
         """
 
@@ -203,7 +200,7 @@ class GithubSearchTests(unittest.TestCase):
 
         print(f"The list of forks with a problem in the order {forks_list_two}.")
 
-    def test_repository_search_by_number_of_stars(self):
+    def test_repo_search_by_num_of_stars(self):
         # Test if the repositories in the response have at least 5000 stars
         response = requests.get('https://api.github.com/search/repositories?q=stars:>5000&sort=stars&order=asc')
         data = response.json()
@@ -212,24 +209,24 @@ class GithubSearchTests(unittest.TestCase):
         stars_count = repository_list[0]["stargazers_count"]
         assert stars_count > 5000, "This is a repository with less than 5000 stars."
 
-    def test_repository_search_by_creation_date(self):
+    def test_repo_search_by_creation_date(self):
         response = requests.get(
-            'https://api.github.com/search/repositories?q=python+created:<=2021-01-01')
+            'https://api.github.com/search/repositories?q=created:<=2021-01-01')
         data = response.json()
         repository_list = data["items"]
 
         repo_created_datetime = repository_list[0]["created_at"]
         assert repo_created_datetime[:4] <= "2021", "This repository was created before 2021."
 
-    def test_repository_search_by_push_date(self):
-        response = requests.get('https://api.github.com/search/repositories?q=python+pushed:2020-01-01')
+    def test_repo_search_by_push_date(self):
+        response = requests.get('https://api.github.com/search/repositories?q=pushed:2020-01-01')
         data = response.json()
         repository_list = data["items"]
 
         repo_pushed_datetime = repository_list[0]["pushed_at"]
         assert repo_pushed_datetime[:4] <= "2020", "This repository was pushed before 2020."
 
-    def test_repository_search_by_language(self):
+    def test_repo_search_by_language(self):
         # Test to verify if the repository language is Python
         response = requests.get('https://api.github.com/search/repositories?q=language:Python')
         data = response.json()
@@ -238,7 +235,7 @@ class GithubSearchTests(unittest.TestCase):
         language = repository_list[0]["language"]
         assert "Python" in language, "This repository has a different language."
 
-    def test_repository_search_by_topic(self):
+    def test_repo_search_by_topic(self):
         response = requests.get('https://api.github.com/search/repositories?q=topic:python')
         data = response.json()
         repository_list = data["items"]
@@ -250,15 +247,15 @@ class GithubSearchTests(unittest.TestCase):
 
         assert "python" in topics_list_lower, "There's no python Topic in this repository."
 
-    def test_repository_search_by_number_of_topics(self):
-        response = requests.get('https://api.github.com/search/repositories?q=python+python+topics:1')
+    def test_repo_search_by_num_of_topics(self):
+        response = requests.get('https://api.github.com/search/repositories?q=topics:1')
         data = response.json()
         repository_list = data["items"]
 
         topics_list = repository_list[0]["topics"]
         assert len(topics_list) == 1, "There's more than one topic in this repository."
 
-    def test_repository_search_by_license(self):
+    def test_repo_search_by_license(self):
         response = requests.get('https://api.github.com/search/repositories?q=python+license:eupl-1.1')
         data = response.json()
         repository_list = data["items"]
@@ -267,7 +264,7 @@ class GithubSearchTests(unittest.TestCase):
         repo_license_description = repository_list[0]["description"]
         self.assertEqual(repo_license_key, "eupl-1.1") and "python" in repo_license_description.lower()
 
-    def test_repository_search_by_visibility(self):
+    def test_repo_search_by_visibility(self):
         # test if a private repository can be access without a auth
         response = requests.get(
             'https://api.github.com/search/repositories?q=signature+in:readme+user:renataberoli+is:private')
@@ -278,32 +275,32 @@ class GithubSearchTests(unittest.TestCase):
 
         # Test if a can access a public repository with the almost same query
         query_repo_public = requests.get(
-            'https://api.github.com/search/repositories?q=abacate+in:description+user:renataberoli+is:public')
+            'https://api.github.com/search/repositories?q=renataberoli+in:description+user:renataberoli+is:public')
         repo_public_json = query_repo_public.json()
         repo_public_data = repo_public_json["items"]
 
         self.assertTrue(repo_public_data), "This repository must be public and return data."
 
-    def test_repository_search_by_if_is_mirror(self):
+    def test_repo_search_by_if_is_mirror(self):
         # mirror true
-        response = requests.get('https://api.github.com/search/repositories?q=python+mirror:true')
+        response = requests.get('https://api.github.com/search/repositories?q=mirror:true')
         data = response.json()
         repository_list = data["items"]
 
         mirror_url = repository_list[0]["mirror_url"]
         self.assertIsNotNone(mirror_url), "This repository is not a mirror."
 
-    def test_repository_search_by_if_is_archived(self):
-        response = requests.get('https://api.github.com/search/repositories?q=python+archived:true')
+    def test_repo_search_by_if_is_archived(self):
+        response = requests.get('https://api.github.com/search/repositories?q=archived:true')
         data = response.json()
         repository_list = data["items"]
 
         archived_status = repository_list[0]["archived"]
         self.assertTrue(archived_status), "This repository is not archived."
 
-    def test_repository_search_by_issue_label_good_first_issues(self):
+    def test_repo_search_by_issue_label_good_first_issues(self):
         response = requests.get(
-            'https://api.github.com/search/repositories?q=abacate+in:description+good-first-issues:%3E=1')
+            'https://api.github.com/search/repositories?q=renataberoli+in:description+good-first-issues:1')
         data = response.json()
         repository_list = data["items"]
 
@@ -320,9 +317,9 @@ class GithubSearchTests(unittest.TestCase):
 
         assert issues_data[1] == "good first issue", "There's no such label."
 
-    def test_repository_search_by_issue_label_wanted_issues(self):
+    def test_repo_search_by_issue_label_wanted_issues(self):
         response = requests.get(
-            'https://api.github.com/search/repositories?q=abacate+in:description+help-wanted-issues:%3E=1')
+            'https://api.github.com/search/repositories?q=renataberoli+in:description+help-wanted-issues:1')
         data = response.json()
         repository_list = data["items"]
 
@@ -339,9 +336,9 @@ class GithubSearchTests(unittest.TestCase):
 
         assert issues_label[0] == "help wanted", "There's no such label."
 
-    def test_repository_search_by_ability_to_sponsor(self):
+    def test_repo_search_by_ability_to_sponsor(self):
         response = requests.get(
-            'https://api.github.com/search/repositories?q=python+is:sponsorable')
+            'https://api.github.com/search/repositories?q=is:sponsorable')
         data = response.json()
         repository_list = data["items"]
 
