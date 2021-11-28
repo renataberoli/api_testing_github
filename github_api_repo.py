@@ -349,13 +349,24 @@ class GithubSearchTests(unittest.TestCase):
         self.assertTrue(repo_public_data), "This repository must be public and return data."
 
     def test_repo_search_by_if_is_mirror(self):
-        # mirror true
-        response = requests.get('https://api.github.com/search/repositories?q=mirror:true')
+        url = "https://api.github.com/search/repositories?q=mirror:true"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        mirror_url = repository_list[0]["mirror_url"]
-        self.assertIsNotNone(mirror_url), "This repository is not a mirror."
+        repos_mirror = []
+        for repo in repository_list:
+            repos_mirror.append(repo["mirror_url"])
+
+        result = [True if repo != "null" else False for repo in repos_mirror]
+
+        error_message = "This repository is not a mirror."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_if_is_archived(self):
         response = requests.get('https://api.github.com/search/repositories?q=archived:true')
