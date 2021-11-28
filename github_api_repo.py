@@ -312,13 +312,24 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_license(self):
-        response = requests.get('https://api.github.com/search/repositories?q=python+license:eupl-1.1')
+        url = "https://api.github.com/search/repositories?q=license:eupl-1.1"
+        response = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         data = response.json()
         repository_list = data["items"]
 
-        repo_license_key = repository_list[0]["license"]["key"]
-        repo_license_description = repository_list[0]["description"]
-        self.assertEqual(repo_license_key, "eupl-1.1") and "python" in repo_license_description.lower()
+        license_keys = []
+        for key in repository_list:
+            license_keys.append(key["license"]["key"])
+
+        result = [True if "eupl-1.1" in data else False for data in license_keys]
+
+        error_message = "There's more than one topic in this repository."
+        self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_visibility(self):
         # test if a private repository can be access without a auth
