@@ -424,12 +424,11 @@ class GithubSearchTests(unittest.TestCase):
             issue_label = issue["labels"]
             issues_data.append(issue_label[0]["name"])
 
-        print(issues_data)
-
         error_message = "There's no such label in this repository's issues."
         self.assertIn("good first issue", issues_data, error_message)
 
     def test_repo_search_by_issue_label_wanted_issues(self):
+        # Search for repositories that have the minimum number os issues labeled "help wanted issues".
         url = "https://api.github.com/search/repositories?q=renataberoli+in:description+help-wanted-issues:1"
         response = requests.get(url)
 
@@ -451,7 +450,8 @@ class GithubSearchTests(unittest.TestCase):
             help_wanted_label = issue["labels"]
             issues_label.append(help_wanted_label[0]["name"])
 
-        assert issues_label[0] == "help wanted", "There's no such label."
+        error_message = "There's no such label in this repository's issues."
+        self.assertIn("help wanted", issues_label, error_message)
 
     def test_repo_search_by_ability_to_sponsor(self):
         # Unable to reproduce : The API didn't return any way to confirm this test.
