@@ -165,7 +165,8 @@ class GithubSearchTests(unittest.TestCase):
         self.assertEqual(len(repository_list), 1)
 
         error_message = "This is a repository with less then 1 follower."
-        self.assertEqual(repository_list[0]["watchers_count"], 1)
+        repository = repository_list[0]["watchers_count"]
+        self.assertEqual(repository, 1, error_message)
 
     def test_repo_search_by_num_of_forks(self):
         url = "https://api.github.com/search/repositories?q=forks:>=10000&sort=forks&order=asc"
@@ -450,6 +451,7 @@ class GithubSearchTests(unittest.TestCase):
         assert issues_label[0] == "help wanted", "There's no such label."
 
     def test_repo_search_by_ability_to_sponsor(self):
+        # Unable to reproduce : The API didn't return any way to confirm this test.
         url = "https://api.github.com/search/repositories?q=is:sponsorable"
         response = requests.get(url)
 
