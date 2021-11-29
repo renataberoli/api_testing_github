@@ -132,3 +132,6 @@ dmypy.json
 
 renataberoli/site/
 test_env/
+
+# environmental variables
+.bash_profile
