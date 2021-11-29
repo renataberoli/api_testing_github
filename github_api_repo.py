@@ -402,6 +402,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_issue_label_good_first_issues(self):
+        # Search for repositories that have the minimum number os issues labeled "good first issue".
         url = "https://api.github.com/search/repositories?q=renataberoli+in:description+good-first-issues:1"
         response = requests.get(url)
 
@@ -411,7 +412,6 @@ class GithubSearchTests(unittest.TestCase):
 
         data = response.json()
         repository_list = data["items"]
-
 
         raw_url = repository_list[0]["issues_url"]
         edited_url = raw_url[:-9]
@@ -424,7 +424,10 @@ class GithubSearchTests(unittest.TestCase):
             issue_label = issue["labels"]
             issues_data.append(issue_label[0]["name"])
 
-        # assert issues_data[1] == "good first issue", "There's no such label."
+        print(issues_data)
+
+        error_message = "There's no such label in this repository's issues."
+        self.assertIn("good first issue", issues_data, error_message)
 
     def test_repo_search_by_issue_label_wanted_issues(self):
         url = "https://api.github.com/search/repositories?q=renataberoli+in:description+help-wanted-issues:1"
