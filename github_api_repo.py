@@ -343,15 +343,22 @@ class GithubSearchTests(unittest.TestCase):
         data = response.json()
         repository_list = data["items"]
 
-        self.assertFalse(repository_list), "This repository wouldn't return data because is private."
+        error_message = "This repository wouldn't return data because is private."
+        self.assertFalse(repository_list, error_message)
 
         # Test if a can access a public repository with the almost same query
-        query_repo_public = requests.get(
-            'https://api.github.com/search/repositories?q=renataberoli+in:description+user:renataberoli+is:public')
+        url = "https://api.github.com/search/repositories?q=renataberoli+in:description+user:renataberoli+is:public"
+        query_repo_public = requests.get(url)
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
         repo_public_json = query_repo_public.json()
         repo_public_data = repo_public_json["items"]
 
-        self.assertTrue(repo_public_data), "This repository must be public and return data."
+        message = "This repository must be public and return data."
+        self.assertTrue(repo_public_data, message)
 
     def test_repo_search_by_if_is_mirror(self):
         url = "https://api.github.com/search/repositories?q=mirror:true"
