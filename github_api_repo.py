@@ -1,14 +1,26 @@
 import random
 import requests
 import unittest
+import os
 
 
 class GithubSearchTests(unittest.TestCase):
 
+    def setUp(self):
+        token = os.environ.get('GH_TOKEN')
+        self.headers = {'Authorization': f'token {token}'}
+
+    def make_request(self, params, auth=True):
+        url = f"https://api.github.com/search/repositories?{params}"
+
+        if auth:
+            return requests.get(url, headers=self.headers)
+        else:
+            return requests.get(url)
+
     def test_repo_search_by_name(self):
         # Test to verify if the API returns only repositories that have in the name the keyword "python"
-        url = "https://api.github.com/search/repositories?q=python+in:name"
-        response = requests.get(url)
+        response = self.make_request("q=python+in:name")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -29,8 +41,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_description(self):
         # Test to verify if the API returns only repositories that have in the description the keyword "python"
-        url = "https://api.github.com/search/repositories?q=python+in:description"
-        response = requests.get(url)
+        response = self.make_request("q=python+in:description")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -46,9 +57,8 @@ class GithubSearchTests(unittest.TestCase):
         self.assertIn("python", random_description.lower(), error_message)
 
     def test_repo_search_by_readme(self):
-        # Test to verify if the API returns only repositories that have in the readme the keyword "cadmio"
-        url = "https://api.github.com/search/repositories?q=cadmio+in:readme"
-        response = requests.get(url)
+        # Test to verify if the API returns only repositories that have in the readme the keyword "Tesla"
+        response = self.make_request("q=tesla+in:readme")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -63,16 +73,17 @@ class GithubSearchTests(unittest.TestCase):
         repo_name = random_repository["name"]
         branch = random_repository["default_branch"]
         repo_url = f"https://raw.githubusercontent.com/{user}/{repo_name}/{branch}/README.md"
-        file_response = requests.get(repo_url)
+        file_response = requests.get(repo_url, headers=self.headers)
         readme_content = file_response.content
 
-        error_message = "There's no 'Cadmio' in the repository's readme."
-        self.assertIn(b"cadmio", readme_content.lower(), error_message)
+        print(readme_content)
+
+        error_message = "There's no 'Tesla' in the repository's readme."
+        self.assertIn(b"tesla", readme_content.lower(), error_message)
 
     def test_repo_search_by_owner_name(self):
         # Test to verify if the API returns only the repository "renataberoli/renataberoli.github.io"
-        url = "https://api.github.com/search/repositories?q=repo:renataberoli/renataberoli.github.io"
-        response = requests.get(url)
+        response = self.make_request("q=repo:renataberoli/renataberoli.github.io")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -89,8 +100,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_user(self):
         # Test to verify if the API returns only the repositories of the user "renataberoli"
-        url = "https://api.github.com/search/repositories?q=user:renataberoli"
-        response = requests.get(url)
+        response = self.make_request("q=user:renataberoli")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -109,8 +119,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, repo_user, error_message)
 
     def test_repo_search_by_org(self):
-        url = "https://api.github.com/search/repositories?q=org:github"
-        response = requests.get(url)
+        response = self.make_request("q=org:github")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -130,8 +139,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_size(self):
         # This test confirm if the repository's size is less or equal than 100 kilobytes
-        url = "https://api.github.com/search/repositories?q=size:<=100"
-        response = requests.get(url)
+        response = self.make_request("q=size:<=100")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -150,9 +158,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_num_of_followers(self):
-
-        url = "https://api.github.com/search/repositories?q=renataberoli+in:description+followers:1"
-        response = requests.get(url)
+        response = self.make_request("q=renataberoli+in:description+followers:1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -169,8 +175,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertEqual(repository, 1, error_message)
 
     def test_repo_search_by_num_of_forks(self):
-        url = "https://api.github.com/search/repositories?q=forks:>=10000&sort=forks&order=asc"
-        response = requests.get(url)
+        response = self.make_request("q=forks:>=10000&sort=forks&order=asc")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -190,8 +195,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_num_of_stars(self):
         # Test if the repositories in the response have at least 5000 stars
-        url = "https://api.github.com/search/repositories?q=stars:>5000&sort=stars&order=asc"
-        response = requests.get(url)
+        response = self.make_request("q=stars:>5000&sort=stars&order=asc")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -210,8 +214,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_creation_date(self):
-        url = "https://api.github.com/search/repositories?q=created:<=2021-01-01"
-        response = requests.get(url)
+        response = self.make_request("q=created:<=2021-01-01")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -231,8 +234,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_push_date(self):
-        url = "https://api.github.com/search/repositories?q=pushed:2020-01-01"
-        response = requests.get(url)
+        response = self.make_request("q=pushed:2020-01-01")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -253,8 +255,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_language(self):
         # Test to verify if the repository language is Python
-        url = "https://api.github.com/search/repositories?q=language:Python"
-        response = requests.get(url)
+        response = self.make_request("q=language:Python")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -273,8 +274,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_topic(self):
-        url = "https://api.github.com/search/repositories?q=topic:python"
-        response = requests.get(url)
+        response = self.make_request("q=topic:python")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -293,8 +293,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_num_of_topics(self):
-        url = "https://api.github.com/search/repositories?q=topics:1"
-        response = requests.get(url)
+        response = self.make_request("q=topics:1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -313,8 +312,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_license(self):
-        url = "https://api.github.com/search/repositories?q=license:eupl-1.1"
-        response = requests.get(url)
+        response = self.make_request("q=license:eupl-1.1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -333,9 +331,8 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_visibility(self):
-        # test if a private repository can be access without a auth
-        url = "https://api.github.com/search/repositories?q=signature+in:readme+user:renataberoli+is:private"
-        response = requests.get(url)
+        # test if a private repository can be access without a authentication
+        response = self.make_request("q=signature+in:readme+user:renataberoli+is:private", False)
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -347,23 +344,8 @@ class GithubSearchTests(unittest.TestCase):
         error_message = "This repository wouldn't return data because is private."
         self.assertFalse(repository_list, error_message)
 
-        # Test if a can access a public repository with the almost same query
-        url = "https://api.github.com/search/repositories?q=renataberoli+in:description+user:renataberoli+is:public"
-        query_repo_public = requests.get(url)
-
-        # Confirm the response status_code
-        status_code = response.status_code
-        self.assertEqual(200, status_code)
-
-        repo_public_json = query_repo_public.json()
-        repo_public_data = repo_public_json["items"]
-
-        message = "This repository must be public and return data."
-        self.assertTrue(repo_public_data, message)
-
     def test_repo_search_by_if_is_mirror(self):
-        url = "https://api.github.com/search/repositories?q=mirror:true"
-        response = requests.get(url)
+        response = self.make_request("q=mirror:true")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -382,8 +364,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_if_is_archived(self):
-        url = "https://api.github.com/search/repositories?q=archived:true"
-        response = requests.get(url)
+        response = self.make_request("q=archived:true")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -403,8 +384,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_issue_label_good_first_issues(self):
         # Search for repositories that have the minimum number os issues labeled "good first issue".
-        url = "https://api.github.com/search/repositories?q=renataberoli+in:description+good-first-issues:1"
-        response = requests.get(url)
+        response = self.make_request("q=renataberoli+in:description+good-first-issues:1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -413,24 +393,23 @@ class GithubSearchTests(unittest.TestCase):
         data = response.json()
         repository_list = data["items"]
 
-        raw_url = repository_list[0]["issues_url"]
-        edited_url = raw_url[:-9]
+        raw_issue_url = repository_list[0]["issues_url"]
+        issue_url = raw_issue_url[:-9]
 
-        response_of_issues = requests.get(edited_url)
+        response_of_issues = requests.get(issue_url, headers=self.headers)
         data_of_issues = response_of_issues.json()
 
         issues_data = []
         for issue in data_of_issues:
-            issue_label = issue["labels"]
-            issues_data.append(issue_label[0]["name"])
+            issue_label = issue["labels"][0]["name"]
+            issues_data.append(issue_label)
 
         error_message = "There's no such label in this repository's issues."
         self.assertIn("good first issue", issues_data, error_message)
 
     def test_repo_search_by_issue_label_wanted_issues(self):
         # Search for repositories that have the minimum number os issues labeled "help wanted issues".
-        url = "https://api.github.com/search/repositories?q=renataberoli+in:description+help-wanted-issues:1"
-        response = requests.get(url)
+        response = self.make_request("q=renataberoli+in:description+help-wanted-issues:1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -442,7 +421,7 @@ class GithubSearchTests(unittest.TestCase):
         raw_url = repository_list[0]["issues_url"]
         edited_url = raw_url[:-9]
 
-        response_of_issues = requests.get(edited_url)
+        response_of_issues = requests.get(edited_url, headers=self.headers)
         data_of_issues = response_of_issues.json()
 
         issues_label = []
@@ -455,8 +434,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_ability_to_sponsor(self):
         # Unable to reproduce : The API didn't return any way to confirm this test.
-        url = "https://api.github.com/search/repositories?q=is:sponsorable"
-        response = requests.get(url)
+        response = self.make_request("q=is:sponsorable")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -465,7 +443,29 @@ class GithubSearchTests(unittest.TestCase):
         data = response.json()
         repository_list = data["items"]
 
-        assert 1 == 1, "The API didn't return any way to confirm this test."
+        error_message = "The API didn't return any way to confirm this test."
+        self.assertTrue(1 == 1, error_message)
+
+    def test_repo_search_by_founding_file(self):
+        # Unable to reproduce : The API didn't return any way to confirm this test.
+        response = self.make_request("q=has:funding-file")
+
+        # Confirm the response status_code
+        status_code = response.status_code
+        self.assertEqual(200, status_code)
+
+        data = response.json()
+        repository_list = data["items"]
+
+        url_list = []
+        for repo in repository_list:
+            url_list.append(repo["contents_url"][:-7])
+
+        content_list = []
+        for url in url_list:
+            response_of_content = requests.get(url)
+            content_data = response_of_content.json()
+            content_list.append(content_data)
 
 
 if __name__ == '__main__':
