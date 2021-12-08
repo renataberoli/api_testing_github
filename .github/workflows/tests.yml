@@ -18,8 +18,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -31,6 +30,8 @@ jobs:
       run: |
          pip install -r requirements.txt
 
-    - name: Test with pytest
+    - name: Use Application Token to Test with pytest
       run: |
         pytest github_api_repo.py --html=report.html
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
