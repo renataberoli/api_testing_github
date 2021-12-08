@@ -31,9 +31,6 @@ jobs:
       run: |
          pip install -r requirements.txt
 
-    - name : Github API authentication
-      run:
-
     - name: Test with pytest
       run: |
         pytest github_api_repo.py --html=report.html
