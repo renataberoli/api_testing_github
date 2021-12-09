@@ -7,7 +7,7 @@ import os
 class GithubSearchTests(unittest.TestCase):
 
     def setUp(self):
-        token = os.environ.get('github-token')
+        token = os.environ.get('GH_TOKEN')
         self.headers = {'Authorization': f'token {token}'}
 
     def make_request(self, params, auth=True):

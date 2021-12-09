@@ -31,8 +31,9 @@ jobs:
          pip install -r requirements.txt
 
     - name: Authentication
-      env:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}"
+
 
     - name: Use Application Token to Test with pytest
       run: |
