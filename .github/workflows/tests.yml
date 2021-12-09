@@ -32,7 +32,7 @@ jobs:
 
     - name: Use Application Token to Test with pytest
       env:
-        BANA-NA: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
       run: |
         pytest github_api_repo.py --html=report.html
 

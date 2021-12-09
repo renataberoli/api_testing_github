@@ -7,7 +7,7 @@ import os
 class GithubSearchTests(unittest.TestCase):
 
     def setUp(self):
-        token = os.environ.get('BANA-NA')
+        token = os.environ.get('github_token')
         self.headers = {'Authorization': f'token {token}'}
 
     def make_request(self, params, auth=True):
