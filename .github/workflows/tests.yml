@@ -35,7 +35,3 @@ jobs:
         echo "${{ secrets.GITHUB_TOKEN }}"
 
 
-    - name: Use Application Token to Test with pytest
-      run: |
-        pytest github_api_repo.py --html=report.html
-
