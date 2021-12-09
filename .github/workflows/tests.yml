@@ -32,7 +32,7 @@ jobs:
 
     - name: Authentication
       env:
-        github_token: ${{ secrets.SuperSecret }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "$github_token"
 
