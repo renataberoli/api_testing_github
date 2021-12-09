@@ -30,14 +30,9 @@ jobs:
       run: |
          pip install -r requirements.txt
 
-    - name: Authentication
-      env:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        echo "$github_token"
-
-
     - name: Use Application Token to Test with pytest
+      env:
+        BANANA: ${{ secrets.GITHUB_TOKEN }}
       run: |
         pytest github_api_repo.py --html=report.html
 
