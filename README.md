@@ -88,6 +88,7 @@ This project is a Pet-project that I created to learn more about automated API t
 | ----------- | --------- | --------------- | 
 | The test aims to confirm that GitHub Search API returns repositories of a certain number of forks. | Use: Number of forks greater or equal to 1000; sort by “forks”; order ascendant. Qualifiers: “fork”; “sort”; “order”. | The GitHub API returns a list of repositories with number of forks greater or equal to 1000 ordered ascendant. |
 
+<div style="background-color=#F4D1D1">
 
 #### Bug found
 
@@ -96,10 +97,12 @@ This project is a Pet-project that I created to learn more about automated API t
 > I also try with a highter (10000) value and the the response returns a ordered list. 
 
 > "forks: >= 1000" 
-> ![Print of the evidence]()
+> ![Print of the evidence](https://github.com/renataberoli/unittest_Python/blob/main/assets/img/1000.png?raw=true)
 > 
 > "forks: >= 10000"
-> ![Print of the evidence]()
+> ![Print of the evidence](https://github.com/renataberoli/unittest_Python/blob/main/assets/img/10000.png?raw=true)
+
+</div>
 
 ----
 
