@@ -96,10 +96,10 @@ This project is a Pet-project that I created to learn more about automated API t
 > I also try with a highter (10000) value and the the response returns a ordered list. 
 
 > "forks: >= 1000" 
-> ![Print of the evidence](../img/1000.png)
+> ![Print of the evidence]()
 > 
 > "forks: >= 10000"
-> ![Print of the evidence](../img/10000.png)
+> ![Print of the evidence]()
 
 ----
 
@@ -113,14 +113,14 @@ This project is a Pet-project that I created to learn more about automated API t
 ### test_repo_search_by_creation_date 
 | Description | Test Data | Expected Result | 
 | ----------- | --------- | --------------- | 
-| The test aims to confirm that GitHub API returns the repositories from a specifc creation date. | Use: Date: 2021-01-01. Qualifier: “created” | The GItHub API returned a list of repositories with the creation date from “2021-01-01”. |
+| The test aims to confirm that GitHub API returns the repositories from a specific creation date. | Use: Date: 2021-01-01. Qualifier: “created” | The GItHub API returned a list of repositories with the creation date from “2021-01-01”. |
 
 ----
 
 ### test_repo_search_by_push_date
 | Description | Test Data | Expected Result | 
 | ----------- | --------- | --------------- | 
-| The test aims to confirm that GItHub API returns the repositories from a specifc pushed date. | Use: Date: 2020-01-01. Qualifier: “pushed” | The GItHub API returned a list of repositories with the creation date from “2020-01-01”. |
+| The test aims to confirm that GItHub API returns the repositories from a specific pushed date. | Use: Date: 2020-01-01. Qualifier: “pushed” | The GItHub API returned a list of repositories with the creation date from “2020-01-01”. |
 
 ----
 
@@ -134,7 +134,7 @@ This project is a Pet-project that I created to learn more about automated API t
 ### test_repo_search_by_topic
 | Description | Test Data | Expected Result | 
 | ----------- | --------- | --------------- | 
-| The test aims to confirm that GitHub API returns the respositories os that have a specific topic. | Use: Keyword “python. Qualifier: “topic”. | The GitHub API returned a list of repositories with “python” as a topic in the topic list.  |
+| The test aims to confirm that GitHub API returns the repositories os that have a specific topic. | Use: Keyword “python. Qualifier: “topic”. | The GitHub API returned a list of repositories with “python” as a topic in the topic list.  |
 
 ----
 
