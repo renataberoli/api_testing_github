@@ -3,6 +3,7 @@
 ### About the project:
 This project is a Pet-project that I created to learn more about automated API testing with Python.
 
+
 #### Tech stack
 
 ![Python](https://img.shields.io/badge/Python-blue)
