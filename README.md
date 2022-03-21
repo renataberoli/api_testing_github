@@ -9,7 +9,7 @@ This project is a Pet-project that I created to learn more about automated API t
 ![Git actions](https://img.shields.io/badge/GiHubActions-red)
 ![Pytest](https://img.shields.io/badge/Pytest-yellow)
 
-### Testing GitHub Search API with python unittest
+#### Testing GitHub Search API with python unittest
 
 - **Project Name:** Testing GitHub Search API with python unittest 
 - **Module Name:** Searching for repositories 
