@@ -1,7 +1,7 @@
 # API Testing with Python - GitHub API
 
 ### About the project:
-This project is a Pet-project that I created to learn more about automated API testing with Python.
+This project is a pet-project that I created to learn more about automated API testing with Python.
 
 #### Tech stack
 
