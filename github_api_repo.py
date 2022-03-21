@@ -7,7 +7,7 @@ import os
 class GithubSearchTests(unittest.TestCase):
 
     def setUp(self):
-        token = os.environ.get('github_token')
+        token = os.environ.get('GH_TOKEN')
         self.headers = {'Authorization': f'token {token}'}
 
     def make_request(self, params, auth=True):
@@ -75,8 +75,6 @@ class GithubSearchTests(unittest.TestCase):
         repo_url = f"https://raw.githubusercontent.com/{user}/{repo_name}/{branch}/README.md"
         file_response = requests.get(repo_url, headers=self.headers)
         readme_content = file_response.content
-
-        print(readme_content)
 
         error_message = "There's no 'Tesla' in the repository's readme."
         self.assertIn(b"tesla", readme_content.lower(), error_message)
@@ -158,7 +156,7 @@ class GithubSearchTests(unittest.TestCase):
         self.assertNotIn(False, result, error_message)
 
     def test_repo_search_by_num_of_followers(self):
-        response = self.make_request("q=renataberoli+in:description+followers:1")
+        response = self.make_request("q=Mark_II+in:description+user:renataberoli+followers:1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -384,7 +382,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_issue_label_good_first_issues(self):
         # Search for repositories that have the minimum number os issues labeled "good first issue".
-        response = self.make_request("q=renataberoli+in:description+good-first-issues:1")
+        response = self.make_request("q=Mark_II+in:description+good-first-issues:1")
 
         # Confirm the response status_code
         status_code = response.status_code
@@ -409,7 +407,7 @@ class GithubSearchTests(unittest.TestCase):
 
     def test_repo_search_by_issue_label_wanted_issues(self):
         # Search for repositories that have the minimum number os issues labeled "help wanted issues".
-        response = self.make_request("q=renataberoli+in:description+help-wanted-issues:1")
+        response = self.make_request("q=Mark_II+in:description+help-wanted-issues:1")
 
         # Confirm the response status_code
         status_code = response.status_code
