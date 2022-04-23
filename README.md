@@ -217,3 +217,5 @@ This project is a pet-project that I created to learn more about automated API t
 - [x] Create scripts using Python to test the GitHub API
 - [x] Study about GitHub Actions
 - [x] Automatize tests using GitHub Actions
+
+
