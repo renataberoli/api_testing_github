@@ -1,0 +1,38 @@
+# This is a basic workflow to help you get started with Actions
+name: Test
+
+on: [push, workflow_dispatch]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: npm
+      - run: npm ci
+      - run: npm install --no-save @testmo/testmo-cli
+
+      # Optionally add a couple of fields such as the git hash and link to the build
+      - run: |
+          npx testmo automation:resources:add-field --name git --type string \
+            --value ${GITHUB_SHA:0:7} --resources resources.json
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          npx testmo automation:resources:add-link --name build \
+            --url $RUN_URL --resources resources.json
+      - run: |
+          npx testmo automation:run:submit \
+            --instance $TESTMO_URL \
+            --project-id 1 \
+            --name "Mocha test run" \
+            --source "unit-tests" \
+            --resources resources.json \
+            --results results/*.xml \
+            -- npm run mocha-junit # Note space after --
+        env:
+          TESTMO_URL: ${{ secrets.TESTMO_URL }}
+          TESTMO_TOKEN: ${{ secrets.TESTMO_TOKEN }}
